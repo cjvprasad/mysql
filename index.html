@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL Mastery Cheat Sheet</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #00758f;
+            --secondary-color: #f29111;
+            --bg-color: #f4f7f6;
+            --sidebar-width: 260px;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            display: flex;
+            background-color: var(--bg-color);
+        }
+        /* Sidebar */
+        nav {
+            width: var(--sidebar-width);
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+        nav h2 { text-align: center; font-size: 1.2rem; color: var(--secondary-color); }
+        nav a {
+            display: block;
+            color: #bdc3c7;
+            padding: 10px 25px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        nav a:hover { background: #34495e; color: white; }
+
+        /* Main Content */
+        main {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { color: var(--primary-color); border-bottom: 3px solid var(--secondary-color); display: inline-block; }
+        h3 { color: #333; margin-top: 0; }
+        pre { border-radius: 5px; margin: 15px 0; }
+        .badge {
+            background: var(--secondary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h2>MySQL Guide</h2>
+    <a href="#basics">Database Basics</a>
+    <a href="#ddl">Table Definitions (DDL)</a>
+    <a href="#dml">Data Manipulation (DML)</a>
+    <a href="#constraints">Constraints & Keys</a>
+    <a href="#joins">Joins & Unions</a>
+    <a href="#logic">Logic & Wildcards</a>
+    <a href="#advanced">Advanced Topics</a>
+    <a href="#triggers">Triggers & Procedures</a>
+</nav>
+
+<main>
+    <h1>MySQL Command Reference</h1>
+
+    <section id="basics" class="section">
+        <h3>1. Database Operations</h3>
+        <pre><code class="language-sql">-- Create and Drop
+CREATE DATABASE myDB;
+DROP DATABASE myDB;
+
+-- Read Only Mode (MySQL 8.0+)
+ALTER DATABASE myDB READ ONLY = 1; -- Enable
+ALTER DATABASE myDB READ ONLY = 0; -- Disable</code></pre>
+    </section>
+
+    <section id="ddl" class="section">
+        <h3>2. Table Modification (ALTER)</h3>
+        <pre><code class="language-sql">-- Rename Table
+RENAME TABLE employees TO workers;
+
+-- Modify Columns
+ALTER TABLE employees ADD email VARCHAR(100) AFTER last_name;
+ALTER TABLE employees MODIFY COLUMN email VARCHAR(150) FIRST;
+ALTER TABLE employees DROP COLUMN email;</code></pre>
+    </section>
+
+    <section id="joins" class="section">
+        <h3>3. Joins & Relationships</h3>
+        <p>Combining data from <code>transactions</code> and <code>customers</code>.</p>
+        
+
+[Image of SQL Joins Venn Diagram]
+
+        <pre><code class="language-sql">-- Inner Join (Matches in both)
+SELECT transaction_id, amount, first_name 
+FROM transactions INNER JOIN customers 
+ON transactions.customer_id = customers.customer_id;
+
+-- Left Join (All transactions, even without customers)
+SELECT * FROM transactions LEFT JOIN customers ON ...;</code></pre>
+    </section>
+
+    <section id="advanced" class="section">
+        <h3>4. Advanced Topics <span class="badge">New</span></h3>
+        <p>Topics beyond basic CRUD operations:</p>
+        
+        <h4>A. Common Table Expressions (CTEs)</h4>
+        <pre><code class="language-sql">-- Improve readability of complex subqueries
+WITH HourlyPayCTE AS (
+    SELECT *, (hourly_pay * 2080) as annual_salary 
+    FROM employees
+)
+SELECT * FROM HourlyPayCTE WHERE annual_salary > 50000;</code></pre>
+
+        <h4>B. Window Functions</h4>
+        <pre><code class="language-sql">-- Rank employees by pay within their job category
+SELECT first_name, job, hourly_pay,
+RANK() OVER(PARTITION BY job ORDER BY hourly_pay DESC) as pay_rank
+FROM employees;</code></pre>
+
+        <h4>C. JSON Data Handling</h4>
+        <pre><code class="language-sql">-- MySQL supports native JSON types
+ALTER TABLE products ADD attributes JSON;
+INSERT INTO products (attributes) VALUES ('{"color": "red", "size": "large"}');
+SELECT attributes->>"$.color" FROM products;</code></pre>
+    </section>
+
+    <section id="triggers" class="section">
+        <h3>5. Automation: Triggers & Procedures</h3>
+        <pre><code class="language-sql">-- Automatically update salary when hourly pay changes
+CREATE TRIGGER before_hourly_pay_update
+BEFORE UPDATE ON employees
+FOR EACH ROW
+SET NEW.salary = (NEW.hourly_pay * 2080);
+
+-- Stored Procedure with Parameters
+DELIMITER //
+CREATE PROCEDURE find_customer(IN id INT)
+BEGIN
+    SELECT * FROM customers WHERE customer_id = id;
+END //
+DELIMITER ;</code></pre>
+    </section>
+
+    <footer>
+        <p style="text-align: center; color: #888;">&copy; 2026 SQL Documentation Portal</p>
+    </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+</body>
+</html>
