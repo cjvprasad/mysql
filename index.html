@@ -5,45 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Developer Hub | Interview, Basics & Resources</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --bg: #f4f7f6; --code-bg: #1e1e1e; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
+       /* Dark Theme Color Palette */
+        :root { 
+            --primary: #1a1a1a; 
+            --accent: #3d5afe; 
+            --success: #00c853; 
+            --bg: #121212; 
+            --card-bg: #1e1e1e;
+            --text: #e0e0e0;
+            --text-dim: #b0b0b0;
+            --code-bg: #000000; 
+            --border: #333333;
+        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); mabody { 
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--text); 
+        }
         
-        .tabs { background: var(--primary); display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .tab-btn { background: none; border: none; color: white; padding: 15px 25px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: 0.3s; }
-        .tab-btn:hover { background: rgba(255,255,255,0.1); }
-        .tab-btn.active { background: var(--accent); border-bottom: 4px solid white; }
+        /* Sticky Navigation */
+        .tabs { 
+            background: var(--primary); 
+            display: flex; 
+            justify-content: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 1px solid var(--border);
+        }
+        .tab-btn { 
+            background: none; 
+            border: none; 
+            color: var(--text-dim); 
+            padding: 18px 25px; 
+            cursor: pointer; 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tab-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+        .tab-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
 
         .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
         .content-section { display: none; }
-        .content-section.active { display: block; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease; }
 
-        .q-card { background: white; padding: 25px; margin-bottom: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--accent); }
-        .q-title { font-weight: 700; color: var(--primary); font-size: 1.1rem; display: block; margin-bottom: 12px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Question Cards */
+        .q-card { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            margin-bottom: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            border: 1px solid var(--border);
+        }
+        .q-title { 
+            font-weight: 700; 
+            color: #ffffff; 
+            font-size: 1.15rem; 
+            display: block; 
+            margin-bottom: 15px; 
+            line-height: 1.4;
+        }
         
-        .btn-group { margin-bottom: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: 0.2s; }
-        .btn-copy { background: var(--primary); color: white; }
-        .btn:hover { opacity: 0.8; }
+        .btn-group { margin-bottom: 15px; display: flex; gap: 10px; }
+        .btn { 
+            padding: 10px 18px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.8rem; 
+            transition: 0.2s; 
+        }
+        .btn-copy { background: var(--accent); color: white; }
+        .btn-setup { background: #444; color: #eee; }
+        .btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
         .btn.copied { background: var(--success) !important; }
 
-        pre { background: var(--code-bg); color: #dcdcdc; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.85rem; line-height: 1.4; }
-        
-        /* Resource Link Styling */
-        .resource-list { display: grid; gap: 15px; }
+        pre { 
+            background: var(--code-bg); 
+            color: #80cbc4; 
+            padding: 20px; 
+            border-radius: 8px; 
+            overflow-x: auto; 
+            border: 1px solid #222;
+            font-family: 'Fira Code', 'Consolas', monospace; 
+            font-size: 0.9rem; 
+            line-height: 1.6; 
+        }
+
+        /* Resources */
         .resource-link { 
             display: flex; 
             align-items: center; 
-            background: white; 
+            background: var(--card-bg); 
             padding: 20px; 
             border-radius: 10px; 
             text-decoration: none; 
-            color: var(--primary); 
-            font-weight: bold; 
-            border: 1px solid #ddd; 
+            color: var(--text); 
+            font-weight: 600; 
+            border: 1px solid var(--border); 
             transition: 0.3s; 
         }
-        .resource-link:hover { border-color: var(--accent); background: #ebf5fb; color: var(--accent); transform: translateX(5px); }
-        .icon { margin-right: 15px; font-size: 1.2rem; }
+        .resource-link:hover { border-color: var(--accent); background: #252525; transform: scale(1.02); }
+
+               /* Mobile specific adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            .tabs { justify-content: flex-start; }
+            .q-card { padding: 15px; }
+            .btn { width: 100%; flex: none; } /* Stack buttons on very small screens */
+        }
     </style>
 </head>
 <body>
